@@ -1,0 +1,205 @@
+def format_letter_rows(puzzle_letters):
+   puzzle = []
+   for i in range(0, 100, 10):
+      row = ''
+      for j in range(10):
+         row += puzzle_letters[i+j]
+      puzzle.append(row)
+   return puzzle
+
+def check_word_forward(puzzle, word):
+   for i in range(len(puzzle)):
+      word_start = puzzle[i].find(word)
+      if word_start != -1:
+         return (word, i, word_start)
+   return (word, -1)
+
+def check_word_backward(puzzle, word):
+    backwards_rows = []
+    for row in puzzle:
+       backwards_row = ''
+       i = len(row) - 1
+       while i >= 0:
+          backwards_row += row[i]
+          i -= 1
+       backwards_rows.append(backwards_row)
+    answer = check_word_forward(backwards_rows, word)
+    if answer != (word, -1):
+       true_index = (len(row) - 1 - answer[2])
+       return (word, answer[1], true_index)
+    else:
+       return (word, -1)
+
+def check_word_down(puzzle, word):
+   columns_as_rows = []
+   for col in range(len(puzzle)):
+      column = ''
+      for row in range(len(puzzle)):
+         column += puzzle[row][col]
+      columns_as_rows.append(column)
+   answer = check_word_forward(columns_as_rows, word)
+   if answer != (word, -1):
+      return (word, answer[2], answer[1])
+   else:
+      return (word, -1)
+
+def check_word_up(puzzle, word):
+   columns_as_rows = []
+   for col in range(len(puzzle)):
+      column = ''
+      for row in range(len(puzzle)):
+         column += puzzle[row][col]
+      columns_as_rows.append(column)
+   answer = check_word_backward(columns_as_rows, word)
+   if answer != (word, -1):
+      return (word, answer[2], answer[1])
+   else: 
+      return (word, -1)
+
+def check_word_diagonal(puzzle, word):
+   for r in range(len(puzzle)):
+      for c in range(len(puzzle)):
+            i = 0
+       from funcs import *
+
+def main():
+   puzzle_letters = input('')
+   puzzle_words = input('')
+   puzzle_words = puzzle_words.split(' ')
+   puzzle = format_letter_rows(puzzle_letters)
+   print('Puzzle:\n')
+   print(puzzle[0])
+   print(puzzle[1])
+   print(puzzle[2])
+   print(puzzle[3])
+   print(puzzle[4])
+   print(puzzle[5])
+   print(puzzle[6])
+   print(puzzle[7])
+   print(puzzle[8])
+   print(puzzle[9])
+   print()
+
+   for word in puzzle_words:
+      forward_check = check_word_forward(puzzle, word)
+      if forward_check != (word, -1):
+          print(word + ': (FORWARD) row: %d column: %d' % (forward_check[1], forward_check[2]))
+      else: 
+         backward_check = check_word_backward(puzzle, word)
+         if backward_check != (word, -1):
+            print(word + ': (BACKWARD) row: %d column: %d' % (backward_check[1], backward_check[2]))
+         else:
+            down_check = check_word_down(puzzle, word)
+            if down_check != (word, -1):
+               print(word + ': (DOWN) row: %d column: %d' % (down_check[1], down_check[2]))
+            else:
+               up_check = check_word_up(puzzle, word)
+               if up_check != (word, -1):
+                  print(word + ': (UP) row: %d column: %d' % (up_check[1], up_check[2]))
+               else:
+                  diagonal_check = check_word_diagonal(puzzle, word)import unittest
+from funcs import *
+
+class TestCases(unittest.TestCase):
+   def test_format_letter_rows_1(self):
+      self.assertEqual(format_letter_rows('WAQHGTTWEECBMIVQQELSAPXWKWIIILLDELFXPIPVPONDTMVAMNOEDSOYQGOBLGQCKGMMCTYCSLOAPUZMXVDMGSXCYZUUIUNIXFNU'), ['WAQHGTTWEE', 'CBMIVQQELS', 'APXWKWIIIL', 'LDELFXPIPV', 'PONDTMVAMN', 'OEDSOYQGOB', 'LGQCKGMMCT', 'YCSLOAPUZM', 'XVDMGSXCYZ', 'UUIUNIXFNU']) 
+   
+   def test_format_letter_rows_2(self):
+      self.assertEqual(format_letter_rows('DSKGHEIOWNVSJJJFKWUENVJAWEVJNSJISUFUPALLNBIROIJPAIEURNNALIRIOERCMLIEURNVKLNZLITUEJOKMCNPAWIEURWJLVZN'), ['DSKGHEIOWN', 'VSJJJFKWUE', 'NVJAWEVJNS', 'JISUFUPALL', 'NBIROIJPAI', 'EURNNALIRI', 'OERCMLIEUR', 'NVKLNZLITU', 'EJOKMCNPAW', 'IEURWJLVZN'])
+
+   def test_check_word_forward_1(self):
+      self.assertEqual(check_word_forward(['fhalsf', 'gdjlai', 'pofhan', 'oicatp', 'kajola', 'quehah'], 'cat'), ('cat', 3, 2))
+
+   def test_check_word_forward_2(self):
+      self.assertEqual(check_word_forward(['fhalsf', 'gdjlai', 'pofhan', 'oicatp', 'kajola', 'quehah'], 'gdj'), ('gdj', 1, 0))
+
+
+   def test_check_word_forward_3(self):
+      self.assertEqual(check_word_forward(['fhalsf', 'gdjlai', 'pofhan', 'oicatp', 'kajola', 'quehah'], 'pofhans'), ('pofhans', -1))   
+
+
+   def test_check_word_forward_4(self):
+      self.assertEqual(check_word_forward(['fhalsf', 'gdjlai', 'pofhan', 'oicatp', 'kajola', 'quehah'], 'hah'), ('hah', 5, 3))
+
+
+   def test_check_word_backward_1(self):
+      self.assertEqual(check_word_backward(['fhalsf', 'gdjlai', 'pofhan', 'oicatp', 'kajola', 'quehah'], 'loj'), ('loj', 4, 4))
+
+
+   def test_check_word_backward_2(self):
+      self.assertEqual(check_word_backward(['fhalsf', 'gdjlai', 'pofhan', 'oicatp', 'kajola', 'quehah'], 'fsl'), ('fsl', 0, 5))
+
+
+   def test_check_word_backward_3(self):
+      self.assertEqual(check_word_backward(['fhalsf', 'gdjlai', 'pofhan', 'oicatp', 'kajola', 'quehah'], 'taco'), ('taco', -1))
+
+
+   def test_check_word_backward_4(self):
+      self.assertEqual(check_word_backward(['fhalsf', 'gdjlai', 'pofhan', 'oicatp', 'kajola', 'quehah'], 'heu'), ('heu', 5, 3))
+
+   def test_check_word_down_1(self):
+      self.assertEqual(check_word_down(['hdksl', 'jolmu', 'kgien', 'pidna', 'quenx'], 'dog'), ('dog', 0, 1))
+
+
+   def test_check_word_down_2(self):
+      self.assertEqual(check_word_down(['hdksl', 'jolmu', 'kgien', 'pidna', 'quenx'], 'unax'), ('unax', 1, 4))
+
+
+   def test_check_word_down_3(self):
+      self.assertEqual(check_word_down(['hdksl', 'jolmu', 'kgien', 'pidna', 'quenx'], 'dim'), ('dim', -1))
+
+
+   def test_check_word_up_1(self):
+      self.assertEqual(check_word_up(['hdksl', 'jolmu', 'kgien', 'pidna', 'quenx'], 'dil'), ('dil', 3, 2))
+
+
+   def test_check_word_up_2(self):
+      self.assertEqual(check_word_up(['hdksl', 'jolmu', 'kgien', 'pidna', 'quenx'], 'god'), ('god', 2, 1))
+
+
+   def test_check_word_up_3(self):
+      self.assertEqual(check_word_up(['hdksl', 'jolmu', 'kgien', 'pidna', 'quenx'], 'man'), ('man', -1))
+
+
+   def test_check_word_diagonal_1(self):
+      self.assertEqual(check_word_diagonal(['hdksl', 'jolmu', 'kgien', 'pidna', 'quenx'], 'dle'), ('dle', 0, 1))
+
+
+   def test_check_word_diagonal_2(self):
+      self.assertEqual(check_word_diagonal(['hdksl', 'jolmu', 'kgien', 'pidna', 'quenx'], 'jgdn'), ('jgdn', 1, 0))
+
+
+   def test_check_word_diagonal_3(self):
+      self.assertEqual(check_word_diagonal(['hdksl', 'jolmu', 'kgien', 'pidna', 'quenx'], 'nx'), ('nx', 3, 3))
+
+
+   def test_check_word_diagonal_4(self):
+      self.assertEqual(check_word_diagonal(['hdksl', 'jolmu', 'kgien', 'pidna', 'quenx'], 'dog'), ('dog', -1))
+
+
+   def test_check_word_diagonal_5(self):
+      self.assertEqual(check_word_diagonal(['oyqgo', 'kgmmc', 'oacuz', 'gsxcy', 'nixfn'], 'gcc'), ('gcc', 1, 1))
+
+
+if __name__ == '__main__':
+   unittest.main()
+
+                  if diagonal_check != (word, -1):
+                     print(word + ': (DIAGONAL) row: %d column: %d' % (diagonal_check[1], diagonal_check[2]))
+                  else:
+                     print(word + ': word not found')
+
+
+
+if __name__ == '__main__':
+   main() 
+
+     if puzzle[r][c] == word[i] and r <= (len(puzzle) - len(word)) and c <= (len(puzzle) - len(word)):
+               answer = True
+               for i in range(1, len(word)):
+                  if puzzle[r+i][c+i] != word[i]:
+                     answer = False
+                     break
+               if answer:
+                  return (word, r, c)
+   return (word, -1)
