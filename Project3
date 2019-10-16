@@ -1,0 +1,130 @@
+# Project 3
+#
+# Name: Sofia Alcazar
+# Instructor: Workman
+
+def get_cages():
+   numCages = int(input('Number of cages: '))
+   mainCage = []
+   singleCage = []
+
+   for i in range(numCages):
+     singleCage = input('Cage number ' + str(i) + ': ').split()
+     cageValue = [int(n) for n in singleCage]
+     mainCage.append(cageValue)
+   return mainCage
+
+
+def check_one_row(row):
+   for i in range(len(row)):
+     if row[i] != 0 and row.count(row[i]) > 1:
+        return False
+   return True
+     
+
+def check_rows_valid(puzzle):
+   for row in range(len(puzzle)):
+      if not check_one_row(puzzle[row]):
+         return False
+   return True
+
+
+def check_one_column(column):
+   for i in range(len(column)):
+     if column[i] != 0 and column.count(column[i]) > 1:
+        return False
+   return True
+
+
+def check_columns_valid(puzzle):
+   for col in range(len(puzzle)):
+      column = []
+      for row in range(len(puzzle)):
+          column.append(puzzle[row][col])
+      if not check_one_column(column):
+             return False
+   return True
+
+
+def check_one_cage(puzzle, cage):
+   cageCheck = []
+   sum = 0
+   for i in range(2, len(cage)):
+      rownum = cage[i] // 5
+      colnum = cage[i] % 5
+      cageCheck.append(puzzle[rownum][colnum])
+   for n in range(len(cageCheck)):
+      sum += cageCheck[n]
+   if cageCheck.count(0) >= 1:
+      if sum >= cage[0]:
+         return False
+   else:
+      if cage[0] != sum:
+        return False
+   return True
+      
+
+def check_cages_valid(puzzle, cages):
+   for singleCage in range(len(cages)):
+      if not check_one_cage(puzzle, cages[singleCage]):
+        return False
+   return True
+
+
+def check_valid(puzzle, cages):
+   if check_rows_valid(puzzle) == True and check_columns_valid(puzzle) == True and check_cages_valid(puzzle, cages) == True:
+      return True
+   else:
+      return False
+
+# Project 3
+#
+# Name: Sofia Alcazar
+#Instructor : Workman
+
+from solverFuncs import *
+
+def main():
+   puzzle = [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]]
+   cages = get_cages()
+   row = col = checks = backtracks = 0
+
+   while row < 5:
+      puzzle[row][col] += 1
+      checks += 1
+      if check_valid(puzzle, cages) == True:
+        col += 1
+        if col == 5:
+          col = 0
+          row += 1
+      elif puzzle[row][col] == 5:
+         while puzzle[row][col] ==5:
+            backtracks += 1
+            puzzle[row][col] = 0
+            col -= 1
+            if col < 0:
+               row -= 1
+               col = 4
+
+   print("\n---Solution---\n")
+   print(*puzzle[0], sep = ' ')
+   print(*puzzle[1], sep = ' ')
+   print(*puzzle[2], sep = ' ')
+   print(*puzzle[3], sep = ' ')
+   print(*puzzle[4], sep = ' ')
+
+   print("\nchecks: %d backtracks: %d" % (checks, backtracks))
+
+if __name__ == '__main__':
+   main()
+
+import unittest
+from solverFuncs import *
+
+class TestCases(unittest.TestCase):
+   def checkrow1(self):
+      self.assertTrue(check_rows_valid([[1, 0, 0], [0, 0, 0], [0, 0, 0]]))
+
+
+if __name__ == '__main__':
+   unittest.main()
