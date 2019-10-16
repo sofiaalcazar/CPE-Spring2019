@@ -1,0 +1,135 @@
+# Project 1
+#
+# Name: Sofia Alcazar
+# Instructor: Workman
+# Section: 03
+
+from math import *
+
+def poundsToKG(pounds):
+   return  pounds * 0.453592
+
+
+def getMassObject(object):
+   if object == 't':
+      return 0.1
+   elif object == 'p':
+      return 1.0
+   elif object == 'r':
+      return 3.0
+   elif object == 'g':
+      return 5.3
+   elif object == 'l':
+      return 9.07
+   else:
+      return 0.0
+
+
+def getVelocityObject(distance):
+   return sqrt((9.8 * distance) / 2)
+
+
+def getVelocitySkater(massSkater, massObject, velObject):
+   return (massObject * velObject) / massSkater
+ 
+
+# Project 1
+#
+# Name: Sofia Alcazar
+# Instructor: Workman
+# Section: 03
+
+from funcs import *
+
+def main():
+   pounds = int(input("How much do you weigh (pounds)? "))
+
+   distance = int(input("How far away is your professor (meters)? "))
+
+   object = input("Will you throw a rotten (t)omato, banana cream (p)ie, (r)ock, (l)ight saber, or lawn (g)nome? ")
+
+   massObject = getMassObject(object) 
+
+   massSkater = poundsToKG(pounds)
+
+   velObject = getVelocityObject(distance)
+
+   velocity = getVelocitySkater(massSkater, massObject, velObject)
+
+   if massObject <= 0.1:
+    print("\nNice throw! You're going to get an F!")
+
+   elif massObject > 0.1 and massObject <= 1.0:
+    print("\nNice throw! Make sure your professor is OK.")
+
+   elif massObject > 1.0 and distance < 20:
+    print("\nNice throw! How far away is the hospital?")
+  
+   elif massObject > 1.0 and distance >= 20:
+    print("\nNice throw! RIP professor.")
+
+   print("Velocity of skater: %.3f m/s" %velocity)
+
+   if velocity < 0.2:
+    print("My grandmother skates faster than you!")
+
+   elif velocity >= 1.0:
+    print("Look out for that railing!!!")
+  
+
+if __name__ == '__main__':
+   main()
+
+import unittest
+from funcs import *
+
+class TestCases(unittest.TestCase):
+   def test_poundsToKG_1(self):
+      self.assertAlmostEqual(poundsToKG(0), 0.0)
+
+   def test_poundsToKG_2(self):
+      self.assertAlmostEqual(poundsToKG(100), 45.3592)
+
+   def test_poundsToKG_3(self):
+      self.assertAlmostEqual(poundsToKG(130), 58.96696)
+      
+   def test_getMassObject_1(self):
+      self.assertEqual(getMassObject('t'), 0.1)
+
+   def test_getMassObject_2(self):
+      self.assertAlmostEqual(getMassObject('p'), 1.0)
+
+   def test_getMassObject_3(self):
+      self.assertAlmostEqual(getMassObject('r'), 3.0)
+
+   def test_getMassObject_4(self):
+      self.assertAlmostEqual(getMassObject('g'), 5.3)
+
+   def test_getMassObject_5(self):
+      self.assertAlmostEqual(getMassObject('l'), 9.07)
+
+   def test_getMassObject_6(self):
+      self.assertAlmostEqual(getMassObject('s'), 0.0)
+      
+   def test_getVelocityObject_1(self):
+      self.assertAlmostEqual(getVelocityObject(0), 0.0)
+
+   def test_getVelocityObject_2(self):
+      self.assertAlmostEqual(getVelocityObject(6), 5.4221767)
+
+   def test_getVelocityObject_3(self):
+      self.assertAlmostEqual(getVelocityObject(11.3), 7.4411021)
+           
+   def test_getVelocitySkater_1(self):
+      self.assertAlmostEqual(getVelocitySkater(100, 0, 100), 0.0)
+
+   def test_getVelocitySkater_2(self):
+      self.assertAlmostEqual(getVelocitySkater(60.578, 5.3, 6.74), 0.5896860)     
+   def test_getVelocitySkater_3(self):
+      self.assertAlmostEqual(getVelocitySkater(49.86, 4.0, 8.43), 0.6762936) 
+
+
+# Run the unit tests.
+if __name__ == '__main__':
+   unittest.main()
+
