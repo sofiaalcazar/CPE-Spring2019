@@ -1,0 +1,153 @@
+# Project 2 - Moonlander
+# Name: Sofia Alcazar
+# Instructor: Workman 
+
+def showWelcome():
+   print("\nWelcome aboard the Lunar Module Flight Simulator")
+   print("\n   To begin you must specify the LM's initial altitude")
+   print("   and fuel level.  To simulate the actual LM use")
+   print("   values of 1300 meters and 500 liters, respectively.")
+   print("\n   Good luck and may the force be with you!\n")
+   
+def getFuel():
+   fuel = int(input('Enter the initial amount of fuel on board the LM (in liters): '))
+   while fuel <= 0:
+     print("ERROR: Amount of fuel must be positive, please try again")
+     fuel = int(input('Enter the initial amount of fuel on board the LM (in liters): '))
+   return fuel
+
+def getAltitude():
+   altitude = float(input('Enter the initial altitude of the LM (in meters): '))
+   while altitude < 1 or altitude > 9999:
+     print("ERROR: Altitude must be between 1 and 9999, inclusive, please try again")
+     altitude = float(input('Enter the initial altitude of the LM (in meters): '))
+   return altitude
+
+def displayLMState(elapsedTime, altitude, velocity, fuelAmount, fuelRate):
+   print("Elapsed Time: %4d s" % elapsedTime)
+   print("        Fuel: %4d l" % fuelAmount)
+   print("        Rate: %4d l/s" % fuelRate)
+   print("    Altitude: %7.2f m" % altitude)
+   print("    Velocity: %7.2f m/s\n" % velocity)
+
+def getFuelRate(currentFuel):
+   fuelRate = int(input('Enter fuel rate (0-9, 0=freefall, 5=constant velocity, 9=max thrust): '))
+   while fuelRate < 0 or fuelRate > 9:
+     print("ERROR: Fuel rate must be between 0 and 9, inclusive")
+     fuelRate = int(input('Enter fuel rate (0-9, 0=freefall, 5=constant velocity, 9=max thrust): '))
+   if fuelRate > currentFuel:
+     fuelRate = currentFuel
+   return fuelRate
+ 
+def updateAcceleration(gravity, fuelRate):
+   return gravity * ((fuelRate / 5) - 1)
+	
+def updateAltitude(altitude, velocity, acceleration):
+   newaltitude = altitude + velocity + (acceleration / 2)
+   if newaltitude < 0:
+     return 0
+   else:
+     return newaltitude
+
+def updateVelocity(velocity, acceleration):
+   return velocity + acceleration
+
+def updateFuel(fuel, fuelRate):
+   newfuel = fuel - fuelRate
+   return newfuel
+
+def displayLMLandingStatus(velocity):
+   if velocity <= 0 and velocity >= -1:
+     print("Status at landing - The eagle has landed!")
+   elif velocity < -1 and velocity > -10:
+     print("Status at landing - Enjoy your oxygen while it lasts!")
+   elif velocity <= -10:
+     print("Status at landing - Ouch - that hurt!")
+
+# Project 2 - Moonlander
+#
+# Name: Sofia Alcazar
+# Instructor: Workman
+
+from landerFuncs import *
+
+def main():
+   showWelcome()
+   altitude = getAltitude()
+   fuel = getFuel()
+   elapsedTime = 0
+   rate = 0
+   velocity = 0
+   print("\nLM state at retrorocket cutoff")
+   
+   while altitude > 0:
+     if fuel > 0:
+       displayLMState(elapsedTime, altitude, velocity, fuel, rate)
+       rate = getFuelRate(fuel)
+       fuel = updateFuel(fuel, rate)
+     else: 
+       print("OUT OF FUEL - Elapsed Time: %3d Altitude: %7.2f Velocity: %7.2f" % (elapsedTime, altitude, velocity))
+       rate = 0
+
+     acceleration = updateAcceleration(1.62, rate)
+     altitude = updateAltitude(altitude, velocity, acceleration)
+     velocity = updateVelocity(velocity, acceleration)
+     elapsedTime += 1
+
+   print("\nLM state at landing/impact")
+
+   if altitude == 0:
+     displayLMState(elapsedTime, altitude, velocity, fuel, rate)
+     displayLMLandingStatus(velocity)
+
+
+if __name__ == '__main__':
+   main()
+# Project 2 - Moonlander
+#
+# Name: Sofia Alcazar
+# Instructor: Workman
+
+import unittest
+from landerFuncs import *
+
+class TestCases(unittest.TestCase):
+   def test_update_acc1(self):
+      self.assertAlmostEqual(updateAcceleration(1.62, 0), -1.62)
+
+   def test_update_acc2(self):
+      self.assertAlmostEqual(updateAcceleration(1.62, 2), -0.972)
+
+   def test_update_acc3(self):
+      self.assertAlmostEqual(updateAcceleration(2.56, 6), 0.512)      
+   def test_update_alt1(self):
+      self.assertAlmostEqual(updateAltitude(500.32, 6.7, 2), 508.02)
+      
+   def test_update_alt2(self):
+      self.assertAlmostEqual(updateAltitude(1300.00, 0.00, 0.00), 1300.00)
+
+   def test_update_alt3(self):
+      self.assertAlmostEqual(updateAltitude(1296.72, -74.6, -3), 1220.62)
+
+   def test_update_vel1(self):
+      self.assertAlmostEqual(updateVelocity(-16.54, -3.96), -20.5)
+
+   def test_update_vel2(self):
+      self.assertAlmostEqual(updateVelocity(-4, -78.03), -82.03)
+
+   def test_update_vel3(self):
+      self.assertAlmostEqual(updateVelocity(0, -1.0), -1.0)
+
+   def test_update_fuel1(self):
+      self.assertAlmostEqual(updateFuel(400, 5), 395)
+
+   def test_update_fuel2(self):
+      self.assertAlmostEqual(updateFuel(0, 5), -5)
+
+   def test_update_fuel3(self):
+      self.assertAlmostEqual(updateFuel(325, 0), 325)
+
+# Run the unit tests.
+if __name__ == '__main__':
+   unittest.main()
+
